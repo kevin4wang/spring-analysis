@@ -153,6 +153,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	static {
 		// Eagerly load the ContextClosedEvent class to avoid weird classloader issues
 		// on application shutdown in WebLogic 8.1. (Reported by Dustin Woods.)
+//		为了避免应用程序在Weblogic8.1关闭时出现类加载异常加载问题，加载IoC容器关闭事件(ContextClosedEvent)类
 		ContextClosedEvent.class.getName();
 	}
 
@@ -450,6 +451,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @return the ResourcePatternResolver for this context
 	 * @see #getResources
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
+	 * 获取Spring资源加载器读取资源文件
 	 */
 	protected ResourcePatternResolver getResourcePatternResolver() {
 		return new PathMatchingResourcePatternResolver(this);
@@ -525,17 +527,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			 */
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 			// Prepare the bean factory for use in this context.
-//			beanfactory预处理工作
+//			beanfactory预处理工作，为BeanFactory配置容器特性，例如类加载器、事件处理器等
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-//				beanfactory准备工作后置处理工作
+//				为容器的某些bean指定特殊的前后置处理器
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
-//				执行beanfactory的后置处理器，执行BeanFactoryPostProcessor的方法；
-//BeanFactoryPostProcessor：BeanFactory的后置处理器。在BeanFactory标准初始化之后执行的；
+//				执行beanfactory的前后置处理器，执行BeanFactoryPostProcessor的方法；
+//BeanFactoryPostProcessor：BeanFactory的处理器。在BeanFactory标准初始化之后执行的；
 //他的重要两个接口：BeanFactoryPostProcessor、BeanDefinitionRegistryPostProcessor
 				invokeBeanFactoryPostProcessors(beanFactory);
 
@@ -544,7 +546,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
-//				执行初始化国际资源
+//				初始化国际化资源
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
@@ -564,7 +566,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
-//				12刷新容器，发送广播事件，保证对应的监听器可以做进一步的逻辑处理
+//				刷新容器，发送广播事件，保证对应的监听器可以做进一步的逻辑处理
 				finishRefresh();
 			}
 
@@ -578,6 +580,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				destroyBeans();
 
 				// Reset 'active' flag.
+//				取消refresh操作，重置容器的同步标识.
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -634,6 +637,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @return the fresh BeanFactory instance
 	 * @see #refreshBeanFactory()
 	 * @see #getBeanFactory()
+	 * 告诉子类启动refreshBeanFactory()方法，Bean定义资源文件的载入从子类的refreshBeanFactory()方法启动
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
 		//创建了一个this.beanFactory = new DefaultListableBeanFactory();设置了序列化的ID
@@ -933,6 +937,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Cancel this context's refresh attempt, resetting the {@code active} flag
 	 * after an exception got thrown.
 	 * @param ex the exception that led to the cancellation
+	 * active：容器是否被启动的标识，true：启动，false：关闭
 	 */
 	protected void cancelRefresh(BeansException ex) {
 		this.active.set(false);

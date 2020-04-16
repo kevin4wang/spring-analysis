@@ -3,11 +3,18 @@
 森林：ioc，di
 重要部件：
 ioc：
+  ioc 容器初始化：定位，加载，初始化
 aop：
+事务
+
 细节看列举重要部件对应类的注释和必要图
 
 ioc实现逻辑：注册，加载，获取
+## 1工程名介绍
 
+spring 总纲
+>org.springframework.context.support.AbstractApplicationContext.refresh
+这个方法定义了spring初始化容器全流程，分析spring源码入口和各个模块有机组合关系
 
 spring 重要部件
 ioc 类
