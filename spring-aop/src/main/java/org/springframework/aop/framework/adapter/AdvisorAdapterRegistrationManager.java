@@ -32,9 +32,10 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * @since 27.02.2004
  * @see #setAdvisorAdapterRegistry
  * @see AdvisorAdapter
+ * 作用：为容器中管理的Bean注册一个面向切面编程的通知适配器，以便在Spring容器为所管理的Bean进行面向切面编程时提供方便
  */
 public class AdvisorAdapterRegistrationManager implements BeanPostProcessor {
-
+//	容器中负责管理切面通知适配器注册的对象
 	private AdvisorAdapterRegistry advisorAdapterRegistry = GlobalAdvisorAdapterRegistry.getInstance();
 
 
@@ -48,14 +49,16 @@ public class AdvisorAdapterRegistrationManager implements BeanPostProcessor {
 	}
 
 
+//	BeanPostProcessor在Bean对象初始化前的操作
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
-
+//	BeanPostProcessor在Bean对象初始化后的操作
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof AdvisorAdapter){
+//			如果容器创建的Bean实例对象是一个切面通知适配器，则向容器中注册
 			this.advisorAdapterRegistry.registerAdvisorAdapter((AdvisorAdapter) bean);
 		}
 		return bean;

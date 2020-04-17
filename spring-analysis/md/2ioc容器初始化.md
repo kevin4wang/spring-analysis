@@ -1,7 +1,7 @@
 ioc 容器初始化可分为：bean的定位，载入，注册
 预备知识：
 重要组件
->org.springframework.beans.factory.BeanFactory
+>org.springframework.beans.factory.BeanFactory  
 >org.springframework.context.ApplicationContext
 >org.springframework.beans.factory.xml.DefaultBeanDefinitionDocumentReader：document对象转为BeanDefinition对象
 
@@ -27,12 +27,15 @@ org.springframework.beans.factory.xml.DefaultDocumentLoader.loadDocument
 org.springframework.beans.factory.xml.DefaultDocumentLoader.loadDocument
 按照Spring的Bean规则对Document对象解析的过程是在DefaultBeanDefinitionDocumentReader中实现的，DefaultBeanDefinitionDocumentReader对Document对象进行解析
 org.springframework.beans.factory.xml.DefaultBeanDefinitionDocumentReader.importBeanDefinitionResource 解析import标签
+到这里IoC容器完成了管理Bean对象的准备工作，但是依赖注入还没有发生。
 
 注册：把BeanDefinition对象放到注册中心
 注册入口：
 >org.springframework.beans.factory.xml.DefaultBeanDefinitionDocumentReader.processBeanDefinition
   >org.springframework.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition
+   >org.springframework.beans.factory.xml.BeanDefinitionParserDelegate.parseBeanDefinitionElement(Element, String, BeanDefinition)
 
+完成注册方法：org.springframework.beans.factory.support.DefaultListableBeanFactory.registerBeanDefinition
 
 
 

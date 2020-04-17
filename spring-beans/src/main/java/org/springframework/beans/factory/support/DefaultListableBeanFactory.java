@@ -724,7 +724,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
-	 * 实例化单例bean
+	 * 对配置lazy-init属性单态Bean的预实例化
 	 * @throws BeansException
 	 */
 	@Override
@@ -744,6 +744,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			 * @see GenericBeanDefinition
 			 */
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+//			Bean不能是抽象的，是单例模式的，且lazy-init属性配置为false
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 //				判断beanName 是否是FactoryBean,如果是还需要通过getObject方法获取
 				if (isFactoryBean(beanName)) {
@@ -795,6 +796,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	// Implementation of BeanDefinitionRegistry interface
 	//---------------------------------------------------------------------
 
+//	注册BeanDefinition
 	@Override
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {
@@ -815,12 +817,14 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		BeanDefinition oldBeanDefinition;
 
 		oldBeanDefinition = this.beanDefinitionMap.get(beanName);
+//		检查是否有同名的BeanDefinition已经在IoC容器中注册，如果已经注册并且不允许覆盖已注册的Bean，则抛出注册失败异常
 		if (oldBeanDefinition != null) {
 			if (!isAllowBeanDefinitionOverriding()) {
 				throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName,
 						"Cannot register bean definition [" + beanDefinition + "] for bean '" + beanName +
 						"': There is already [" + oldBeanDefinition + "] bound.");
 			}
+//			如果允许覆盖，则同名的Bean，后注册的覆盖先注册的
 			else if (oldBeanDefinition.getRole() < beanDefinition.getRole()) {
 				// e.g. was ROLE_APPLICATION, now overriding with ROLE_SUPPORT or ROLE_INFRASTRUCTURE
 				if (this.logger.isWarnEnabled()) {
@@ -871,6 +875,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		if (oldBeanDefinition != null || containsSingleton(beanName)) {
+//			重置所有已经注册过的BeanDefinition的缓存
 			resetBeanDefinition(beanName);
 		}
 	}
